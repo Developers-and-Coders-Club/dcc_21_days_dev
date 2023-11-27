@@ -20,6 +20,7 @@ createTables();
 app.get('/ping', (_, res) => {
     res.status(200).json('pong');
 })
+
 app.use('/user', userRouter);
 
 app.listen(PORT, () => {console.log(`Server started at PORT ${PORT}`)});

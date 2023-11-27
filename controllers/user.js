@@ -6,9 +6,9 @@ async function handleUserSignUp(req, res) {
     return res.json({msg : "signup"});
 }
 
-const func = {
+const userController = {
     handleUserLogin,
     handleUserSignUp,
-}
+};
 
-export default func;
+export default userController;
