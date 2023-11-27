@@ -2,16 +2,18 @@ import express from 'express';
 import sqlite from 'better-sqlite3';
 import axios from 'axios';
 import cron from 'node-cron';
-import dbOperations from './db/db.js'
+import createTable from './db/connection.js';
+import dbOperations from './db/dbOperations.js'
 
 const app = express();
+
 // -------Middlewares-------------
 app.use(express.json());
 
 const PORT = process.env.PORT || 3000;
 
-// Create HitMap Table
-dbOperations.createTable();
+// Connect DB and Create HitMap Table
+createTable();
 
 // -------Routes--------
 app.get('/ping', (_, res) => {
