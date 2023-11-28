@@ -3,8 +3,8 @@ import Database from "../connection.js";
 async function addSubmission(submission) {
   const query = `INSERT INTO reviewTable VALUES (?, ?, ?, ?, ?, ?)`;
   await Database.prepare(query).run(
-    submission.username,
     submission.submissionId,
+    submission.username,
     submission.driveLink,
     submission.liveLink,
     submission.domain,
@@ -17,8 +17,8 @@ async function getParticipantReviewSubmissions(user, domain) {
 }
 
 async function getAllReviewSubmissions(domain) {
-    const query = "SELECT * FROM reviewTable WHERE domain = ?";
-    return await Database.prepare(query).get(domain);
+  const query = "SELECT * FROM reviewTable WHERE domain = ?";
+  return await Database.prepare(query).get(domain);
 }
 
 const reviewManager = {

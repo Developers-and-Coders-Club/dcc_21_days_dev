@@ -1,8 +1,10 @@
 import Database from "../connection.js";
 
 async function getUser(username, password) {
-  const query = `SELECT * FROM UserInfo WHERE username = ? AND PASSWORD = ?`;
-  return await Database.prepare(query).get(username, password);
+  const query = `SELECT * FROM UserInfo WHERE username = ? AND password = ?`;
+  const user = await Database.prepare(query).get(username, password);
+  console.log(user);
+  return user;
 }
 async function addUser(user) {
   const query = `INSERT INTO UserInfo 

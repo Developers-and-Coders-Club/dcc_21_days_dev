@@ -1,10 +1,13 @@
 import authService from "../service/auth.js";
 
 function checkForAuthentication(req, res, next) {
-  const user = authService.getUser(req.token);
+  console.log(req.headers.token);
+  const user = authService.getUser(req.headers.token);
+  req.user = null;
   if (!user) {
-    return res.status(400).json({ msg: "Login Required" });
+    return res.status(400).json({ msg: "Middleware: Login Required" });
   }
+  req.user = user;
   next();
 }
 

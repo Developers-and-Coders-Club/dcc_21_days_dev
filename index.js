@@ -24,7 +24,7 @@ app.get('/ping', (_, res) => {
     res.status(200).json('pong');
 })
 
-app.post('/submission', submissionController.addSubmission);
+app.post('/submission', authMiddleware.checkForAuthentication, submissionController.addSubmission);
 app.use('/user',  userRouter);
 app.use('/web', webRouter);
 

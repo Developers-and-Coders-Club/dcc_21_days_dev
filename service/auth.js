@@ -13,6 +13,8 @@ function setUser(user) {
 function getUser(token) {
     if(!token) return null;
     try {
+        const result = jwt.verify(token, secret);
+        console.log(result);
         return jwt.verify(token, secret);
     }
     catch(error) {

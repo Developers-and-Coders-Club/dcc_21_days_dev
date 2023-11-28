@@ -2,10 +2,12 @@ import reviewManager from "../db/CRUD ops/review.js";
 import authService from "../service/auth.js";
 
 async function addSubmission(req, res) {
-  const user = authService.getUser(req.token);
-  if (!user) {
-    return res.status(400).json({ msg: "Login Required" });
-  }
+  // req - 
+      // username TEXT NOT NULL,
+      // driveLink TEXT NOT NULL,
+      // liveLink TEXT,
+      // domain TEXT NOT NULL,
+      // dayNo INT NOT NULL
   const submission = req.body;
   submission.submissionId =
     Date.now() + submission.username + submission.domain + submission.dayNo;
@@ -14,14 +16,13 @@ async function addSubmission(req, res) {
 }
 
 async function handleGetParticipantReviewSubmissions(req, res) {
-  const result = await getParticipantReviewSubmissions(user, req.domain);
-  console.log(result);
-  return res.status(200).json({ result });
+  const result = await reviewManager.getParticipantReviewSubmissions(req.user, req.headers.domain);
+  return res.status(200).send(result);
 }
 
 async function handleGetAllReviewSubmissions(req, res) {
-  const result = await getParticipantReviewSubmissions(req.domain);
-  return res.status(200).json({ result });
+  const result = await reviewManager.getParticipantReviewSubmissions(req.domain);
+  return res.status(200).send(result);
 }
 const submissionController = {
   addSubmission,
