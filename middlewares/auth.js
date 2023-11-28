@@ -1,12 +1,10 @@
 import authService from "../service/auth.js";
 
 function checkForAuthentication(req, res, next) {
-  // const authorizationHeaderValue = req.headers["authorization"];
-  const tokenCookie = req.cookies?.token;
-  req.user = null;
-  if (!tokenCookie) return next();
-  const user = authService.getUser(tokenCookie);
-  req.user = user;
+  const user = authService.getUser(req.token);
+  if (!user) {
+    return res.status(400).json({ msg: "Login Required" });
+  }
   next();
 }
 

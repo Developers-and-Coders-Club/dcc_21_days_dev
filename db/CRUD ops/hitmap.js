@@ -1,8 +1,8 @@
 import Database from "../connection";
 
-async function addParticipant(name) {
-  const query = `INSERT INTO HitMap1 (name) VALUES (?)`;
-  await Database.prepare(query).run(name);
+async function addParticipant(username) {
+  const query = `INSERT INTO HitMap1 (username) VALUES (?)`;
+  await Database.prepare(query).run(username);
 }
 
 async function updateParticipation(name, dayNo) {

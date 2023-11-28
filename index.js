@@ -1,10 +1,11 @@
 import express from 'express';
-import sqlite from 'better-sqlite3';
 import axios from 'axios';
 import cron from 'node-cron';
 import createTables from './db/createTable.js';
 import userRouter from './routes/user.js'
+import webRouter from './routes/web.js'
 import authMiddleware from "./middlewares/auth.js"
+import submissionController from "./controllers/submission.js"
 
 const app = express();
 
@@ -23,6 +24,9 @@ app.get('/ping', (_, res) => {
     res.status(200).json('pong');
 })
 
+app.post('/submission', submissionController.addSubmission);
 app.use('/user',  userRouter);
+app.use('/web', webRouter);
+
 
 app.listen(PORT, () => {console.log(`Server started at PORT ${PORT}`)});

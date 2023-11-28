@@ -1,5 +1,9 @@
 import Database from "../connection.js";
 
+async function getUser(username, password) {
+  const query = `SELECT * FROM UserInfo WHERE username = ? AND PASSWORD = ?`;
+  return await Database.prepare(query).get(username, password);
+}
 async function addUser(user) {
   const query = `INSERT INTO UserInfo 
     (username, email, enrollNo, password, phoneNumber) 
@@ -26,6 +30,7 @@ async function isUsernameExists(username, email) {
 
 const userManager = {
   addUser,
+  getUser,
   isUsernameExists,
 };
 export default userManager;
