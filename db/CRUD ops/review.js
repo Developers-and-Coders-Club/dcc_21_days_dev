@@ -1,6 +1,10 @@
 import Database from "../connection.js";
 
 async function addSubmission(submission) {
+  const dayNo = await parseInt(submission.dayNo);
+  if (isNaN(dayNo) || dayNo < 1 || dayNo > 21) {
+    return { error: "Invalid dayNo" };
+  }
   const query = `INSERT INTO reviewTable VALUES (?, ?, ?, ?, ?, ?)`;
   await Database.prepare(query).run(
     submission.submissionId,
@@ -8,7 +12,7 @@ async function addSubmission(submission) {
     submission.driveLink,
     submission.liveLink,
     submission.domain,
-    submission.dayNo
+    dayNo
   );
 }
 async function getParticipantReviewSubmissions(user, domain) {
