@@ -1,4 +1,4 @@
-import userManager from "../db/CRUD ops/user.js";
+import userManager from "../db/operations/user.js";
 import authService from "../service/auth.js";
 
 async function handleUserLogin(req, res) {

@@ -5,7 +5,7 @@ async function addSubmission(submission) {
   if (isNaN(dayNo) || dayNo < 1 || dayNo > 21) {
     return { error: "Invalid dayNo" };
   }
-  const query = `INSERT INTO reviewTable VALUES (?, ?, ?, ?, ?, ?)`;
+  const query = `INSERT INTO reviewSubmissionTable VALUES (?, ?, ?, ?, ?, ?)`;
   await Database.prepare(query).run(
     submission.submissionId,
     submission.username,
@@ -16,12 +16,12 @@ async function addSubmission(submission) {
   );
 }
 async function getParticipantReviewSubmissions(user, domain) {
-  const query = "SELECT * FROM reviewTable WHERE username = ? AND domain = ?";
+  const query = "SELECT * FROM reviewSubmissionTable WHERE username = ? AND domain = ?";
   return await Database.prepare(query).get(user.username, domain);
 }
 
 async function getAllReviewSubmissions(domain) {
-  const query = "SELECT * FROM reviewTable WHERE domain = ?";
+  const query = "SELECT * FROM reviewSubmissionTable WHERE domain = ?";
   return await Database.prepare(query).get(domain);
 }
 

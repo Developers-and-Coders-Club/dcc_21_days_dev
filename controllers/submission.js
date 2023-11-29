@@ -1,4 +1,4 @@
-import reviewManager from "../db/CRUD ops/review.js";
+import reviewManager from "../db/operations/review.js";
 
 const domains = ["web", "android", "ml"];
 

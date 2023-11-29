@@ -1,7 +1,7 @@
 import Database from "../connection";
 
 async function addParticipant(username) {
-  const query = `INSERT INTO HitMap1 (username) VALUES (?)`;
+  const query = `INSERT INTO heatmap (username) VALUES (?)`;
   await Database.prepare(query).run(username);
 }
 
@@ -9,17 +9,17 @@ async function updateParticipation(name, dayNo) {
   if (isNaN(dayNo)) {
     throw new Error("Day number is not a number");
   }
-  const query = `UPDATE HitMap1 set day${dayNo} = ? WHERE name = ?`;
+  const query = `UPDATE heatmap set day${dayNo} = ? WHERE name = ?`;
   await Database.prepare(query).run(1, name);
 }
 
 async function deleteParticipant(name) {
-  const query = `DELETE FROM HitMap1 WHERE name = ?`;
+  const query = `DELETE FROM heatmap WHERE name = ?`;
   await Database.prepare(query).run(name);
 }
 
 async function getData() {
-  const query = "SELECT * FROM HitMap1";
+  const query = "SELECT * FROM heatmap";
   await Database.prepare(query).all();
 }
 const func = {

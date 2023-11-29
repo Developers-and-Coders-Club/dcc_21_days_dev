@@ -1,7 +1,7 @@
 import Database from "./connection.js";
 
 function createHitmapTable() {
-  const query = `CREATE TABLE IF NOT EXISTS HitMap1 (
+  const query = `CREATE TABLE IF NOT EXISTS heatmap (
      username PRIMARY KEY,
      web TEXT default "000000000000000000000",
      android TEXT default "000000000000000000000",
@@ -22,8 +22,8 @@ function createUserTable() {
   Database.prepare(query).run();
 }
 
-function createReviewTable() {
-  const query = `CREATE TABLE IF NOT EXISTS reviewTable (
+function createReviewSubmissionTable() {
+  const query = `CREATE TABLE IF NOT EXISTS reviewSubmissionTable (
       submissionId TEXT PRIMARY KEY,
       username TEXT NOT NULL,
       driveLink TEXT NOT NULL,
@@ -34,10 +34,24 @@ function createReviewTable() {
   Database.prepare(query).run();
 }
 
+function createProcessedSubmissionTable() {
+  const query = `CREATE TABLE IF NOT EXISTS processedSubmissionTable (
+      submissionId TEXT PRIMARY KEY,
+      username TEXT NOT NULL,
+      driveLink TEXT NOT NULL,
+      liveLink TEXT,
+      domain TEXT NOT NULL,
+      dayNo INT NOT NULL,
+      verdict TEXT NOT NULL
+    )`;
+  Database.prepare(query).run();
+}
+
 function createTables() {
   createHitmapTable();
   createUserTable();
-  createReviewTable();
+  createReviewSubmissionTable();
+  createProcessedSubmissionTable();
 }
 
 export default createTables;
