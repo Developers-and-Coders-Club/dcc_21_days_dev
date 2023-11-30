@@ -37,7 +37,7 @@ function createReviewSubmissionTable() {
 
 function createProcessedSubmissionTable() {
   const query = `CREATE TABLE IF NOT EXISTS processedSubmissionTable (
-      submissionId TEXT PRIMARY KEY,
+      submissionId TEXT,
       username TEXT NOT NULL,
       driveLink TEXT NOT NULL,
       liveLink TEXT,

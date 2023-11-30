@@ -5,6 +5,7 @@ import cron from "node-cron";
 import createTables from "./database/createTable.js";
 import userRouter from "./routes/user.js";
 import submissionRouter from "./routes/submission.js";
+import leaderboardRouter from "./routes/leaderboard.js";
 import authMiddleware from "./middlewares/auth.js";
 
 const app = express();
@@ -25,7 +26,7 @@ app.get("/ping", (_, res) => {
 
 app.use("/user", userRouter);
 app.use("/submission", authMiddleware.checkForAuthentication, submissionRouter);
-// app.use("/leaderboard", )
+app.use("/leaderboard", leaderboardRouter);
 
 app.listen(PORT, () => {
   console.log(`Server started at PORT ${PORT}`);

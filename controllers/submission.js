@@ -1,6 +1,7 @@
 import reviewManager from "../database/operations/review.js";
 import processedManager from "../database/operations/processed.js";
 import heatMapManager from "../database/operations/heatmap.js";
+
 const domains = ["web", "android", "ml"];
 
 async function addSubmission(req, res) {
@@ -51,7 +52,7 @@ async function handleSubmissionEvaluation(req, res) {
   const submission = await reviewManager.getSubmission(submissionId);
 
   if (!submission) return res.status(400).json({ error: "No such submission" });
-  
+
   if (accept === 1) {
     submission.verdict = "accepted";
   } else submission.verdict = "rejected";
