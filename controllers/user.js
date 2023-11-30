@@ -1,4 +1,4 @@
-import userManager from "../db/operations/user.js";
+import userManager from "../database/operations/user.js";
 import authService from "../service/auth.js";
 
 async function handleUserLogin(req, res) {
@@ -16,6 +16,7 @@ async function handleUserSignUp(req, res) {
   const user = req.body;
   if (
     !user ||
+    !user.fullName ||
     !user.username ||
     !user.email ||
     !user.enrollNo ||

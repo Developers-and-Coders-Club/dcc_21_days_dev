@@ -1,5 +1,6 @@
-import reviewManager from "../db/operations/review.js";
-
+import reviewManager from "../database/operations/review.js";
+import processedManager from "../database/operations/processed.js";
+import heatMapManager from "../database/operations/heatmap.js";
 const domains = ["web", "android", "ml"];
 
 async function addSubmission(req, res) {
@@ -29,15 +30,47 @@ async function handleGetAllReviewSubmissions(req, res) {
   return res.status(200).send(result);
 }
 
+function updateUserHeatmapHelper(submission, userHeatMap) {
+  const dayNo = submission.dayNo - 1;
+  const array = userHeatMap[submission.domain].split("");
+  array[dayNo] = "1";
+  userHeatMap[submission.domain] = array.join("");
+  return userHeatMap;
+}
+
 async function handleSubmissionEvaluation(req, res) {
   if (!domains.includes(req.params.domain))
     return res.status(404).json({ msg: "Domain not specified" });
+
   const submissionId = req.body.submissionId;
-  const accept = req.body.accept;
-  if(accept === true)
-  {
-    
+  const accept = parseInt(req.body.accept);
+
+  if (accept == null || !(accept in [0, 1]))
+    return res.status(404).json({ msg: "accept field is boolean" });
+
+  const submission = await reviewManager.getSubmission(submissionId);
+
+  if (!submission) return res.status(400).json({ error: "No such submission" });
+  
+  if (accept === 1) {
+    submission.verdict = "accepted";
+  } else submission.verdict = "rejected";
+
+  await reviewManager.deleteSubmission(submissionId);
+  await processedManager.addSubmission(submission);
+
+  if (accept === 1) {
+    const userHeatMap = await heatMapManager.getParticipantHeatMap(
+      submission.username
+    );
+    const newUserHeatMap = updateUserHeatmapHelper(submission, userHeatMap);
+    await heatMapManager.updateParticipantHeatMap(
+      submission.username,
+      submission.domain,
+      newUserHeatMap
+    );
   }
+  res.status(200).json({ msg: "submission processed" });
 }
 
 const submissionController = {

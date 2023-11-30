@@ -11,11 +11,13 @@ router.post(
   restrictTo(["PARTICIPANT", "ADMIN"]),
   submissionController.handleGetParticipantReviewSubmissions
 );
+
 router.post(
   "/all/:domain",
   restrictTo(["ADMIN"]),
   submissionController.handleGetAllReviewSubmissions
 );
+
 router.post(
   "/evaluation/:domain",
   restrictTo(["ADMIN"]),

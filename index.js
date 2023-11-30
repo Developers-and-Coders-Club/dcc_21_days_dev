@@ -2,7 +2,7 @@ import express from "express";
 import axios from "axios";
 import cron from "node-cron";
 
-import createTables from "./db/createTable.js";
+import createTables from "./database/createTable.js";
 import userRouter from "./routes/user.js";
 import submissionRouter from "./routes/submission.js";
 import authMiddleware from "./middlewares/auth.js";
