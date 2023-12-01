@@ -5,7 +5,7 @@ const checkTaskSubmitted = async (username, domain, day) => {
     if (
       username === null ||
       day === null ||
-      day > 21 ||
+      day > 20 ||
       !domains.includes(domain)
     ) {
       return { response: 2, message: "day is greater 21 or null" };
