@@ -8,7 +8,7 @@ async function getSubmission(submissionId) {
 async function addSubmission(submission) {
   const dayNo = await parseInt(submission.dayNo);
   if (isNaN(dayNo) || dayNo < 1 || dayNo > 21) {
-    return { error: "Invalid dayNo" };
+    return false;
   }
   const query = `INSERT INTO reviewSubmissionTable VALUES (?, ?, ?, ?, ?, ?)`;
   await Database.prepare(query).run(
@@ -19,6 +19,7 @@ async function addSubmission(submission) {
     submission.domain,
     dayNo
     );
+    return true
   }
   
   async function deleteSubmission(submissionId) {

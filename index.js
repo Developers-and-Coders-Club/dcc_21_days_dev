@@ -1,7 +1,4 @@
 import express from "express";
-import axios from "axios";
-import cron from "node-cron";
-
 import createTables from "./database/createTable.js";
 import userRouter from "./routes/user.js";
 import submissionRouter from "./routes/submission.js";
@@ -27,6 +24,7 @@ app.get("/ping", (_, res) => {
 app.use("/user", userRouter);
 app.use("/submission", authMiddleware.checkForAuthentication, submissionRouter);
 app.use("/leaderboard", leaderboardRouter);
+// app.use("/utility", utilRouter);
 
 app.listen(PORT, () => {
   console.log(`Server started at PORT ${PORT}`);
