@@ -9,7 +9,7 @@ async function addSubmission(submission) {
     submission.liveLink,
     submission.domain,
     submission.dayNo,
-    submission.verdict,
+    submission.points,
   );
 }
 

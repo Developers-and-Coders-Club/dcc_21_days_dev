@@ -1,13 +1,15 @@
 import reviewManager from "../database/operations/review.js";
 import processedManager from "../database/operations/processed.js";
 import heatMapManager from "../database/operations/heatmap.js";
+import taskSubmitted from "../database/operations/taskSubmitted.js";
+import score from "../database/operations/score.js";
 
 const domains = ["web", "android", "ml"];
 
 // Function to get local time in a specific time zone
 function getLocalTime(timezone) {
   const options = { timeZone: timezone };
-  const formatter = new Intl.DateTimeFormat('en-US', options);
+  const formatter = new Intl.DateTimeFormat("en-US", options);
   const localTime = new Date(formatter.format(new Date()));
   return localTime;
 }
@@ -21,30 +23,93 @@ function calculateDaysDifference(date1, date2) {
 
 function getDayNumber() {
   // Set the target date (5 Nov 2023 12:00 AM in Asia/Kolkata)
-  const targetDate = new Date('2023-12-05T00:00:00Z');
-  targetDate.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
-  
+  const targetDate = new Date("2023-12-05T00:00:00Z");
+  targetDate.toLocaleString("en-US", { timeZone: "Asia/Kolkata" });
+
   // Get the current local time in Asia/Kolkata
-  const currentTimeInAsiaKolkata = getLocalTime('Asia/Kolkata');
-  
+  const currentTimeInAsiaKolkata = getLocalTime("Asia/Kolkata");
+
   // Calculate the difference in days
-  const daysDifference = calculateDaysDifference(currentTimeInAsiaKolkata, targetDate);
+  const daysDifference = calculateDaysDifference(
+    currentTimeInAsiaKolkata,
+    targetDate
+  );
 
   return daysDifference + 1; // change required
 }
 
-
 async function handleAddSubmission(req, res) {
   // req - (datatype : TEXT) - username, driveLink, liveLink(optional), domain
-  const submission = req.body;
-  submission.dayNo = "5";
-  // submission.dayNo = getDayNumber();
-  submission.submissionId =
-    // Date.now() + submission.username + submission.domain + submission.dayNo;
-    Date.now();
-  const result = await reviewManager.addSubmission(submission);
-  if (result === false) return res.status(404).send(result);
-  res.status(200).json({ msg: "successfully submitted" });
+  try {
+    const dayNo = getDayNumber(); //change required before testing
+    // const dayNo=1;
+
+    const submission = {
+      username: req.body.username,
+      driveLink: req.body.driveLink,
+      domain: req.body.domain,
+      liveLink: req.body.liveLink,
+      dayNo: dayNo,
+    };
+
+    if (
+      (!domains.includes(submission.domain),
+      dayNo > 21,
+      dayNo < 1,
+      submission.driveLink === null,
+      submission.username === null,
+      submission.domain === null)
+    ) {
+      return res
+        .status(400)
+        .json({ msg: "Domain not specified || userName not included " });
+    }
+
+    const isAlreadySubmitted = await taskSubmitted.checkTaskSubmitted(
+      submission.username,
+      submission.domain,
+      submission.dayNo
+    );
+
+    if (isAlreadySubmitted.response === 1) {
+      return res.status(200).json({ msg: "Task already submitted" });
+    } else if (isAlreadySubmitted.response === 2) {
+      return res.status(400).json({ msg: isAlreadySubmitted.message });
+    }
+
+    //change required before testing deployment
+    submission.submissionId =
+      Date.now() + submission.username + submission.domain + submission.dayNo;
+    // submission.submissionId = Date.now(); // Date.now() + submission.username + submission.domain + submission.dayNo;
+
+    const result = await reviewManager.addSubmission(submission);
+    if (result === false) {
+      return res.status(400).json({ msg: "not submitted" });
+    }
+    const updateAlreadySubmittedDb = await taskSubmitted.setTaskSubmitted(
+      submission.username,
+      submission.domain,
+      submission.dayNo
+    );
+    if (updateAlreadySubmittedDb.response === 2) {
+      console.log(
+        "race around condition updated but record not write in taskSubmitted db"
+      );
+      await taskSubmitted.setTaskSubmitted(
+        submission.username,
+        submission.domain,
+        submission.dayNo
+      );
+    } else {
+      console.log("task submitted and updated in taskSubmitted db");
+    }
+    return res.status(200).json({
+      msg: `successfully submitted submissionId:${submission.submissionId}`,
+    });
+  } catch {
+    return res.status(400).json({ msg: "submission aborted" });
+  }
+  // const dayNo = getDayNumber();
 }
 
 async function handleGetParticipantReviewSubmissions(req, res) {
@@ -75,33 +140,44 @@ function updateUserHeatmapHelper(submission, userHeatMap) {
 async function handleSubmissionEvaluation(req, res) {
   if (!domains.includes(req.body.domain))
     return res.status(404).json({ msg: "Domain not specified" });
+  if (!req.body.points)
+    return res.status(404).json({ msg: "score field is integer" });
 
+  //when and where will this be called and who will provide
+  //submissionId
   const submissionId = req.body.submissionId;
   const points = parseInt(req.body.points);
 
-  if (!score)
-    return res.status(404).json({ msg: "score field is integer" });
+  try {
+    const submission = await reviewManager.getSubmission(submissionId);
 
-  const submission = await reviewManager.getSubmission(submissionId);
+    if (!submission)
+      return res.status(400).json({ error: "No such submission" });
 
-  if (!submission) return res.status(400).json({ error: "No such submission" });
-
-  submission.points = score;
-  await reviewManager.deleteSubmission(submissionId);
-  await processedManager.addSubmission(submission);
-
-  if (accept === 1) {
-    const userHeatMap = await heatMapManager.getParticipantHeatMap(
-      submission.username
-    );
-    const newUserHeatMap = updateUserHeatmapHelper(submission, userHeatMap);
-    await heatMapManager.updateParticipantHeatMap(
+    submission.points = points;
+    await reviewManager.deleteSubmission(submissionId);
+    await processedManager.addSubmission(submission);
+    const updatedScoredReturned=await score.updateScoreUser(
+      req.body.domain,
       submission.username,
-      submission.domain,
-      newUserHeatMap
+      submission.points
     );
+
+    if (accept === 1) {
+      const userHeatMap = await heatMapManager.getParticipantHeatMap(
+        submission.username
+      );
+      const newUserHeatMap = updateUserHeatmapHelper(submission, userHeatMap);
+      await heatMapManager.updateParticipantHeatMap(
+        submission.username,
+        submission.domain,
+        newUserHeatMap
+      );
+    }
+    return res.status(200).json({ msg: `submission processed updated score ${updatedScoredReturned}` });
+  } catch {
+    return res.status(400).json({ msg: "submission not processed" });
   }
-  res.status(200).json({ msg: "submission processed" });
 }
 
 const submissionController = {

@@ -2,14 +2,14 @@ import Database from "../connection.js";
 const domains = ["web", "android", "ml"];
 
 //[{username:username,score:score}]
-const getAllScoresDomain = async (domain) => {
+const getScoresDomain = async (domain) => {
   try {
     if (!domain || domains.includes(domain) === false) {
       console.log("domain is not valid");
       return [];
     }
     const query = `SELECT username,${domain} FROM scoreTable`;
-    const result = await Database.prepare(query);
+    const result = await Database.prepare(query).all();
     return result;
   } catch {
     console.log("cannot fetch record from scoreDb");
@@ -79,7 +79,7 @@ const getScoreUser = async (domain, username) => {
 const getScoreAllDomains = async () => {
   try {
     const query = `SELECT username,web,android,ml FROM scoreTable`;
-    const result = await Database.prepare(query);
+    const result = await Database.prepare(query).all();
     return result;
   } catch {
     console.log("cannot fetch score in scoreTable");
@@ -88,7 +88,7 @@ const getScoreAllDomains = async () => {
 };
 
 const score = {
-  getAllScoresDomain,
+  getScoresDomain,
   updateScoreUser,
   getScoreUser,
   getScoreAllDomains,
