@@ -11,15 +11,15 @@ const checkTaskSubmitted = async (username, domain, day) => {
       return { response: 2, message: "day is greater 21 or null" };
     }
     const query = `SELECT ${domain} FROM userAlreadySubmittedTable WHERE username=?`;
-    const result = await Database.prepare(query).get(username);
+    let result = await Database.prepare(query).get(username);
     if (result === null) {
       return { response: 0, message: "user not found" };
+    }
+    result = result[domain];
+    if (result[day - 1] === "1") {
+      return { response: 1, message: "task already submitted before" };
     } else {
-      if (result[day - 1] === "1") {
-        return { response: 1, message: "task already submitted before" };
-      } else {
-        return { response: 0, message: "task not submitted before" };
-      }
+      return { response: 0, message: "task not submitted before" };
     }
   } catch {
     return { response: 2, message: "can't read from db" };
