@@ -7,19 +7,25 @@ const router = express.Router();
 const restrictTo = authMiddleware.restrictTo;
 
 router.post(
+  "/",
+  restrictTo(["PARTICIPANT", "ADMIN"]),
+  submissionController.handleAddSubmission
+);
+
+router.get(
   "/my/:domain",
   restrictTo(["PARTICIPANT", "ADMIN"]),
   submissionController.handleGetParticipantReviewSubmissions
 );
 
-router.post(
+router.get(
   "/all/:domain",
   restrictTo(["ADMIN"]),
   submissionController.handleGetAllReviewSubmissions
 );
 
 router.post(
-  "/evaluation/:domain",
+  "/evaluation",
   restrictTo(["ADMIN"]),
   submissionController.handleSubmissionEvaluation
 );

@@ -3,9 +3,9 @@ import Database from "./connection.js";
 function createHitmapTable() {
   const query = `CREATE TABLE IF NOT EXISTS heatmap (
      username PRIMARY KEY,
-     web TEXT default "000000000000000000000",
-     android TEXT default "000000000000000000000",
-     ml TEXT default "000000000000000000000"
+     web INT,
+     android INT,
+     ml INT"
   )`;
   Database.prepare(query).run();
 }
@@ -43,7 +43,7 @@ function createProcessedSubmissionTable() {
       liveLink TEXT,
       domain TEXT NOT NULL,
       dayNo INT NOT NULL,
-      verdict TEXT NOT NULL
+      points TEXT NOT NULL
     )`;
   Database.prepare(query).run();
 }
