@@ -56,7 +56,7 @@ async function handleAddSubmission(req, res) {
     //------------------------
 
     const submission = {
-      username: req.body.username,
+      username: req.user.username,
       driveLink: req.body.driveLink,
       domain: req.body.domain,
       liveLink: req.body.liveLink,
