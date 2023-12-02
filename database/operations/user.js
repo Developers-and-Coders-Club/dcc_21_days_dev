@@ -1,9 +1,8 @@
-import Database from "../connection.js";
+import Database from '../connection.js';
 
 async function getUser(username, password) {
   const query = `SELECT * FROM UserInfo WHERE username = ? AND password = ?`;
   const user = await Database.prepare(query).get(username, password);
-  console.log(user);
   return user;
 }
 async function addUser(user) {
@@ -27,7 +26,7 @@ async function addUser(user) {
 
 async function isUsernameExists(username, email) {
   const query = `SELECT 1 FROM UserInfo WHERE username = ? OR email = ? LIMIT 1`;
-  return  await Database.prepare(query).get(username, email);
+  return await Database.prepare(query).get(username, email);
 }
 
 const userManager = {

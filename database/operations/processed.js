@@ -1,4 +1,4 @@
-import Database from "../connection.js";
+import Database from '../connection.js';
 
 async function addSubmission(submission) {
   const query = `INSERT INTO processedSubmissionTable VALUES (?, ?, ?, ?, ?, ?, ?)`;
@@ -9,28 +9,25 @@ async function addSubmission(submission) {
     submission.liveLink,
     submission.domain,
     submission.dayNo,
-    submission.points,
+    submission.points
   );
 }
 
 //[{submissionId, username, driveLink, liveLink, domain, dayNo, points }]
 async function getAllProcessedUser(username) {
-  try
-  {
+  try {
     const query = `SELECT * FROM processedSubmissionTable WHERE username = ?`;
-    const result= await Database.prepare(query).all(username);
+    const result = await Database.prepare(query).all(username);
     return result;
-  }
-  catch
-  {
-    console.log("Error in getAllProcessedUser");
+  } catch (err) {
+    console.error('Error in getAllProcessedUser', err);
     return [];
   }
 }
 
 const processedManager = {
-    addSubmission,
-    getAllProcessedUser,
-}
+  addSubmission,
+  getAllProcessedUser,
+};
 
 export default processedManager;

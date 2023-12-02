@@ -1,4 +1,4 @@
-import Database from "../connection.js";
+import Database from '../connection.js';
 
 async function getSubmissionById(submissionId) {
   const query = `SELECT * FROM reviewSubmissionTable WHERE submissionId = ?`;
@@ -34,7 +34,7 @@ async function getParticipantReviewSubmissions(user, domain) {
 }
 
 async function getAllReviewSubmissions(domain) {
-  const query = "SELECT * FROM reviewSubmissionTable WHERE domain = ?";
+  const query = 'SELECT * FROM reviewSubmissionTable WHERE domain = ?';
   return await Database.prepare(query).all(domain);
 }
 
@@ -43,8 +43,8 @@ async function getAllReviewUser(username) {
     const query = `SELECT * FROM reviewSubmissionTable WHERE username = ?`;
     const result = await Database.prepare(query).all(username);
     return result;
-  } catch {
-    console.log("Error in getAllProcessedUser");
+  } catch (err) {
+    console.error('Error in getAllProcessedUser', err);
     return [];
   }
 }
