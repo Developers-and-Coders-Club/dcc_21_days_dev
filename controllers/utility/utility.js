@@ -32,4 +32,5 @@ async function getDayNumber(req, resp) {
 }
 
 const utility = { getDayNumber, getLocalTime, calculateDaysDifference };
-module.exports = utility;
+
+export default utility;
