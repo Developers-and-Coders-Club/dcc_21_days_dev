@@ -12,6 +12,7 @@ import score from "../database/operations/score.js";
 const handleGetLeaderboard = async (req, res) => {
   try {
     const domain = req.params.domain;
+    if (!domain) throw new Error;
     const leaderboard = await score.getScoresDomain(domain);
     return res.status(200).send(leaderboard);
   } catch {

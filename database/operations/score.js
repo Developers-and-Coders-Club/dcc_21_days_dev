@@ -6,14 +6,14 @@ const getScoresDomain = async (domain) => {
   try {
     if (!domain || domains.includes(domain) === false) {
       console.log("domain is not valid");
-      return [];
+      return [{ username: "god", score: 123 }]; // hatana hai
     }
     const query = `SELECT username,${domain} FROM scoreTable`;
     const result = await Database.prepare(query).all();
     return result;
   } catch {
     console.log("cannot fetch record from scoreDb");
-    return [];
+    return [{ username: "devil", score: 404 }]; // hatana hai
   }
 };
 
@@ -23,8 +23,8 @@ const updateScoreUser = async (domain, username, score) => {
     if (
       !domain ||
       domains.includes(domain) === false ||
-      score === null ||
-      username === null
+      isNaN(score) ||
+      !username
     ) {
       console.log("domain,score or username is not valid in updateScoreUser");
       return 0;
@@ -33,7 +33,8 @@ const updateScoreUser = async (domain, username, score) => {
     const queryUpdate = `UPDATE scoreTable SET ${domain}=? WHERE username=?`;
     const queryInsert = `INSERT INTO scoreTable (username,${domain}) VALUES (?, ?)`;
     const fetchResult = await Database.prepare(queryFetch).get(username);
-    if (fetchResult === null) {
+    console.log(fetchResult);
+    if (fetchResult === null || fetchResult[domain] === null) {
       console.log("new user is added to scoreTable");
       await Database.prepare(queryInsert).run(username, score);
       return score;

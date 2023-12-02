@@ -3,6 +3,7 @@ import processedManager from "../database/operations/processed.js";
 import heatMapManager from "../database/operations/heatmap.js";
 import taskSubmitted from "../database/operations/taskSubmitted.js";
 import score from "../database/operations/score.js";
+import { v4 as uuidv4 } from "uuid";
 
 const domains = ["web", "android", "ml"];
 
@@ -53,12 +54,12 @@ async function handleAddSubmission(req, res) {
     };
 
     if (
-      (!domains.includes(submission.domain),
-      dayNo > 21,
-      dayNo < 1,
-      submission.driveLink === null,
-      submission.username === null,
-      submission.domain === null)
+      !domains.includes(submission.domain) ||
+      dayNo > 21 ||
+      dayNo < 1 ||
+      submission.driveLink === null ||
+      submission.username === null ||
+      submission.domain === null
     ) {
       return res
         .status(400)
@@ -74,12 +75,14 @@ async function handleAddSubmission(req, res) {
     if (isAlreadySubmitted.response === 1) {
       return res.status(200).json({ msg: "Task already submitted" });
     } else if (isAlreadySubmitted.response === 2) {
-      return res.status(400).json({ msg: isAlreadySubmitted.message });
+      // return res.status(400).json({ msg: isAlreadySubmitted.message });
+      console.log(isAlreadySubmitted.message)
+      return res.status(500).json({ msg: "there is some server error. it's me not you !" });
     }
 
     //change required before testing deployment
-    submission.submissionId =
-      Date.now() + submission.username + submission.domain + submission.dayNo;
+    submission.submissionId = uuidv4();
+    // Date.now() + submission.username + submission.domain + submission.dayNo;
     // submission.submissionId = Date.now(); // Date.now() + submission.username + submission.domain + submission.dayNo;
 
     const result = await reviewManager.addSubmission(submission);
@@ -93,7 +96,7 @@ async function handleAddSubmission(req, res) {
     );
     if (updateAlreadySubmittedDb.response === 2) {
       console.log(
-        "race around condition updated but record not write in taskSubmitted db"
+        "race around condition work updated in review submission table but record/log not updated in taskSubmittedDb"
       );
       await taskSubmitted.setTaskSubmitted(
         submission.username,
@@ -107,7 +110,7 @@ async function handleAddSubmission(req, res) {
       msg: `successfully submitted submissionId:${submission.submissionId}`,
     });
   } catch {
-    return res.status(400).json({ msg: "submission aborted" });
+    return res.status(500).json({ msg: "submission aborted server side error!" });
   }
   // const dayNo = getDayNumber();
 }
@@ -140,13 +143,13 @@ function updateUserHeatmapHelper(submission, userHeatMap) {
 async function handleSubmissionEvaluation(req, res) {
   if (!domains.includes(req.body.domain))
     return res.status(404).json({ msg: "Domain not specified" });
-  if (!req.body.points)
-    return res.status(404).json({ msg: "score field is integer" });
+  const points = parseInt(req.body.points);
+  if (isNaN(res.body.points))
+    return res.status(404).json({ msg: "score is null" });
 
   //when and where will this be called and who will provide
   //submissionId
   const submissionId = req.body.submissionId;
-  const points = parseInt(req.body.points);
 
   try {
     const submission = await reviewManager.getSubmission(submissionId);
@@ -157,24 +160,27 @@ async function handleSubmissionEvaluation(req, res) {
     submission.points = points;
     await reviewManager.deleteSubmission(submissionId);
     await processedManager.addSubmission(submission);
-    const updatedScoredReturned=await score.updateScoreUser(
+    const updatedScoredReturned = await score.updateScoreUser(
       req.body.domain,
       submission.username,
       submission.points
     );
 
-    if (accept === 1) {
-      const userHeatMap = await heatMapManager.getParticipantHeatMap(
-        submission.username
-      );
-      const newUserHeatMap = updateUserHeatmapHelper(submission, userHeatMap);
-      await heatMapManager.updateParticipantHeatMap(
-        submission.username,
-        submission.domain,
-        newUserHeatMap
-      );
-    }
-    return res.status(200).json({ msg: `submission processed updated score ${updatedScoredReturned}` });
+    // govind dcc wants to know !!!
+    // if (accept === 1) {
+    //   const userHeatMap = await heatMapManager.getParticipantHeatMap(
+    //     submission.username
+    //   );
+    //   const newUserHeatMap = updateUserHeatmapHelper(submission, userHeatMap);
+    //   await heatMapManager.updateParticipantHeatMap(
+    //     submission.username,
+    //     submission.domain,
+    //     newUserHeatMap
+    //   );
+    // }
+    return res.status(200).json({
+      msg: `submission processed updated score ${updatedScoredReturned}`,
+    });
   } catch {
     return res.status(400).json({ msg: "submission not processed" });
   }

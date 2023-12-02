@@ -5,6 +5,7 @@ async function getSubmission(submissionId) {
   return await Database.prepare(query).get(submissionId);
 }
 
+// some ghapla
 async function addSubmission(submission) {
   const dayNo = await parseInt(submission.dayNo);
   if (isNaN(dayNo) || dayNo < 1 || dayNo > 21) {
@@ -18,17 +19,17 @@ async function addSubmission(submission) {
     submission.liveLink,
     submission.domain,
     dayNo
-    );
-    return true
-  }
-  
-  async function deleteSubmission(submissionId) {
-    const query = `DELETE FROM reviewSubmissionTable WHERE submissionId = ?`;
-    return await Database.prepare(query).run(submissionId);
-  }
-  
-  async function getParticipantReviewSubmissions(user, domain) {
-    const query = `SELECT * FROM reviewSubmissionTable WHERE username = ? AND domain = ?`;
+  );
+  return true;
+}
+
+async function deleteSubmission(submissionId) {
+  const query = `DELETE FROM reviewSubmissionTable WHERE submissionId = ?`;
+  return await Database.prepare(query).run(submissionId);
+}
+
+async function getParticipantReviewSubmissions(user, domain) {
+  const query = `SELECT * FROM reviewSubmissionTable WHERE username = ? AND domain = ?`;
   return await Database.prepare(query).all(user.username, domain);
 }
 

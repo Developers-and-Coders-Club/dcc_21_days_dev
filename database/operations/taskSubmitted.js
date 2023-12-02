@@ -1,5 +1,6 @@
 import Database from "../connection.js";
 const domains = ["web", "android", "ml"];
+//2--> error
 const checkTaskSubmitted = async (username, domain, day) => {
   try {
     if (
@@ -15,6 +16,7 @@ const checkTaskSubmitted = async (username, domain, day) => {
     if (result === null) {
       return { response: 0, message: "user not found" };
     }
+    //{web:000000000000000000000}
     result = result[domain];
     if (result[day - 1] === "1") {
       return { response: 1, message: "task already submitted before" };
