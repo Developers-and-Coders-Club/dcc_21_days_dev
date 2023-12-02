@@ -5,6 +5,8 @@ import submissionRouter from './routes/submission.js';
 import leaderboardRouter from './routes/leaderboard.js';
 import authMiddleware from './middlewares/auth.js';
 import utilityRouter from './routes/utility.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 

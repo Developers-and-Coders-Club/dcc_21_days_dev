@@ -4,3 +4,4 @@
 /service/auth.js
 /service/private_key.pem
 /service/public_key.pem
+/backup
