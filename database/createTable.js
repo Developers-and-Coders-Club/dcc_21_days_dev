@@ -1,11 +1,11 @@
-import Database from "./connection.js";
+import Database from './connection.js';
 
 function createHitmapTable() {
   const query = `CREATE TABLE IF NOT EXISTS heatmap (
      username PRIMARY KEY,
      web INT,
      android INT,
-     ml INT"
+     ml INT
   )`;
   Database.prepare(query).run();
 }
@@ -58,15 +58,14 @@ function createAlreadySubmittedTable() {
   Database.prepare(query).run();
 }
 
-function createScoreTable()
-{
-    const query=`CREATE TABLE IF NOT EXISTS scoreTable(
+function createScoreTable() {
+  const query = `CREATE TABLE IF NOT EXISTS scoreTable(
         username TEXT PRIMARY KEY,
         web INT default 0,
         android INT default 0,
         ml INT default 0
     )`;
-    Database.prepare(query).run();
+  Database.prepare(query).run();
 }
 
 function createTables() {
