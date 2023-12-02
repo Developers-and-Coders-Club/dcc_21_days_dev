@@ -13,8 +13,15 @@ router.post(
 );
 
 router.get(
-  "/my/:domain",
+  "/my",
   restrictTo(["PARTICIPANT", "ADMIN"]),
+  submissionController.handleGetAllUserSubmission
+);
+
+//deprecated
+router.get(
+  "/my/:domain",
+  restrictTo(["ADMIN"]),
   submissionController.handleGetParticipantReviewSubmissions
 );
 
