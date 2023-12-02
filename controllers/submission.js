@@ -39,11 +39,21 @@ function getDayNumber() {
   return daysDifference + 1; // change required
 }
 
+//TODO: change required before testing deployment 😰
 async function handleAddSubmission(req, res) {
   // req - (datatype : TEXT) - username, driveLink, liveLink(optional), domain
   try {
-    const dayNo = getDayNumber(); //change required before testing
-    // const dayNo=1;
+    // const dayNo = getDayNumber(); //change required before testing
+    const dayNo = 2; // 👹
+
+    //-----------possible solution days allowed logic---------------
+    // const dayNo=req.body.dayNo;
+    // const currentDayNo = getDayNumber();
+    // if (currentDayNo - dayNo>1 || currentDayNo - dayNo<0)
+    //{
+    //   return res.status(400).json({ msg: "dayNo is exceeded the allowed window" });
+    // }
+    //------------------------
 
     const submission = {
       username: req.body.username,
@@ -76,8 +86,10 @@ async function handleAddSubmission(req, res) {
       return res.status(200).json({ msg: "Task already submitted" });
     } else if (isAlreadySubmitted.response === 2) {
       // return res.status(400).json({ msg: isAlreadySubmitted.message });
-      console.log(isAlreadySubmitted.message)
-      return res.status(500).json({ msg: "there is some server error. it's me not you !" });
+      console.log(isAlreadySubmitted.message);
+      return res
+        .status(500)
+        .json({ msg: "there is some server error. it's me not you !" });
     }
 
     //change required before testing deployment
@@ -94,6 +106,7 @@ async function handleAddSubmission(req, res) {
       submission.domain,
       submission.dayNo
     );
+    console.log(updateAlreadySubmittedDb);
     if (updateAlreadySubmittedDb.response === 2) {
       console.log(
         "race around condition work updated in review submission table but record/log not updated in taskSubmittedDb"
@@ -110,7 +123,9 @@ async function handleAddSubmission(req, res) {
       msg: `successfully submitted submissionId:${submission.submissionId}`,
     });
   } catch {
-    return res.status(500).json({ msg: "submission aborted server side error!" });
+    return res
+      .status(500)
+      .json({ msg: "submission aborted server side error!" });
   }
   // const dayNo = getDayNumber();
 }
@@ -141,10 +156,8 @@ function updateUserHeatmapHelper(submission, userHeatMap) {
 }
 
 async function handleSubmissionEvaluation(req, res) {
-  if (!domains.includes(req.body.domain))
-    return res.status(404).json({ msg: "Domain not specified" });
   const points = parseInt(req.body.points);
-  if (isNaN(res.body.points))
+  if (isNaN(req.body.points))
     return res.status(404).json({ msg: "score is null" });
 
   //when and where will this be called and who will provide
@@ -152,7 +165,7 @@ async function handleSubmissionEvaluation(req, res) {
   const submissionId = req.body.submissionId;
 
   try {
-    const submission = await reviewManager.getSubmission(submissionId);
+    const submission = await reviewManager.getSubmissionById(submissionId);
 
     if (!submission)
       return res.status(400).json({ error: "No such submission" });
@@ -161,7 +174,7 @@ async function handleSubmissionEvaluation(req, res) {
     await reviewManager.deleteSubmission(submissionId);
     await processedManager.addSubmission(submission);
     const updatedScoredReturned = await score.updateScoreUser(
-      req.body.domain,
+      submission.domain,
       submission.username,
       submission.points
     );
@@ -186,7 +199,30 @@ async function handleSubmissionEvaluation(req, res) {
   }
 }
 
+const handleGetAllUserSubmission = async (req, res) => {
+  try {
+    if (!req.user) {
+      return res.status(400).json({ msg: "user not logged in" });
+    }
+    const processedSubmissionData = await processedManager.getAllProcessedUser(
+      req.user.username
+    );
+    const reviewSubmissionData = await reviewManager.getAllReviewUser(
+      req.user.username
+    );
+    return res.status(200).json({
+      accepted: processedSubmissionData,
+      underReview: reviewSubmissionData,
+    });
+  } catch {
+    return res
+      .status(500)
+      .json({ msg: "server error", accepted: [], underReview: [] });
+  }
+};
+
 const submissionController = {
+  handleGetAllUserSubmission,
   handleAddSubmission,
   handleGetAllReviewSubmissions,
   handleGetParticipantReviewSubmissions,

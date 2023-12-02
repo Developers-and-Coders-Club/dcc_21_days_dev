@@ -13,12 +13,12 @@ const checkTaskSubmitted = async (username, domain, day) => {
     }
     const query = `SELECT ${domain} FROM userAlreadySubmittedTable WHERE username=?`;
     let result = await Database.prepare(query).get(username);
-    if (result === null) {
+    if (!result) {
       return { response: 0, message: "user not found" };
     }
     //{web:000000000000000000000}
-    result = result[domain];
-    if (result[day - 1] === "1") {
+    result = result[domain].split("");
+    if (result[day - 1] === `1`) {
       return { response: 1, message: "task already submitted before" };
     } else {
       return { response: 0, message: "task not submitted before" };
@@ -42,7 +42,8 @@ const setTaskSubmitted = async (username, domain, day) => {
     const queryFetch = `SELECT ${domain} FROM userAlreadySubmittedTable WHERE username=?`;
     const queryUpdate = `UPDATE userAlreadySubmittedTable SET ${domain}=? WHERE username=?`;
     const result = await Database.prepare(queryFetch).get(username); //result is a string of 21 characters
-    if (result === null) {
+    console.log("setTask",result);
+    if (!result) {
       const newHeatMap = "0".repeat(21);
       let newTaskSubmitted = newHeatMap.split("");
       newTaskSubmitted[day - 1] = "1";
@@ -53,7 +54,7 @@ const setTaskSubmitted = async (username, domain, day) => {
         message: `new user is added and task is submitted for them ${username}`,
       };
     } else {
-      let newTaskSubmitted = result.split("");
+      let newTaskSubmitted = result[domain].split("");
       newTaskSubmitted[day - 1] = "1";
       newTaskSubmitted = newTaskSubmitted.join("");
       await Database.prepare(queryUpdate).run(newTaskSubmitted, username);

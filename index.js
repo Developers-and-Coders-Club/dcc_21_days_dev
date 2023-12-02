@@ -4,6 +4,7 @@ import userRouter from "./routes/user.js";
 import submissionRouter from "./routes/submission.js";
 import leaderboardRouter from "./routes/leaderboard.js";
 import authMiddleware from "./middlewares/auth.js";
+import utilityRouter from "./routes/utility.js";
 
 const app = express();
 
@@ -24,6 +25,7 @@ app.get("/ping", (_, res) => {
 app.use("/user", userRouter);
 app.use("/submission", authMiddleware.checkForAuthentication, submissionRouter);
 app.use("/leaderboard", leaderboardRouter);
+app.use("/utility", utilityRouter);
 // app.use("/utility", utilRouter);
 
 app.listen(PORT, () => {

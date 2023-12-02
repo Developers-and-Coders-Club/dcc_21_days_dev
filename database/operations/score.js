@@ -34,7 +34,7 @@ const updateScoreUser = async (domain, username, score) => {
     const queryInsert = `INSERT INTO scoreTable (username,${domain}) VALUES (?, ?)`;
     const fetchResult = await Database.prepare(queryFetch).get(username);
     console.log(fetchResult);
-    if (fetchResult === null || fetchResult[domain] === null) {
+    if (!fetchResult) {
       console.log("new user is added to scoreTable");
       await Database.prepare(queryInsert).run(username, score);
       return score;
@@ -79,9 +79,13 @@ const getScoreUser = async (domain, username) => {
 //[{username:username,web:web,android:android,ml:ml}]
 const getScoreAllDomains = async () => {
   try {
-    const query = `SELECT username,web,android,ml FROM scoreTable`;
-    const result = await Database.prepare(query).all();
-    return result;
+    const queryWeb = `SELECT username,web AS score FROM scoreTable ORDER BY web DESC`;
+    const queryAndroid = `SELECT username,android AS score FROM scoreTable ORDER BY android DESC`;
+    const queryML = `SELECT username,ml AS score FROM scoreTable ORDER BY ml DESC`;
+    const resultWeb = await Database.prepare(queryWeb).all();
+    const resultAndroid = await Database.prepare(queryAndroid).all();
+    const resultML = await Database.prepare(queryML).all();
+    return [{ web: resultWeb, android: resultAndroid, ml: resultML }];
   } catch {
     console.log("cannot fetch score in scoreTable");
     return [];
