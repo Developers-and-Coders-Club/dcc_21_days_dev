@@ -1,6 +1,6 @@
 import Database from './connection.js';
 
-function createHitmapTable() {
+function createHeatmapTable() {
   const query = `CREATE TABLE IF NOT EXISTS heatmap (
      username PRIMARY KEY,
      web INT,
@@ -69,7 +69,7 @@ function createScoreTable() {
 }
 
 function createTables() {
-  createHitmapTable();
+  createHeatmapTable();
   createUserTable();
   createReviewSubmissionTable();
   createProcessedSubmissionTable();

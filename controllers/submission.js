@@ -44,7 +44,7 @@ async function handleAddSubmission(req, res) {
   // req - (datatype : TEXT) - username, driveLink, liveLink(optional), domain
   try {
     // const dayNo = getDayNumber(); //change required before testing
-    const dayNo = 2; // 👹
+    const dayNo = 3; // 👹
 
     //-----------possible solution days allowed logic---------------
     // const dayNo=req.body.dayNo;
@@ -120,7 +120,8 @@ async function handleAddSubmission(req, res) {
       console.log("task submitted and updated in taskSubmitted db");
     }
     return res.status(200).json({
-      msg: `successfully submitted submissionId:${submission.submissionId}`,
+      msg: `successfully submitted`,
+      submissionId:`${submission.submissionId}`,
     });
   } catch {
     return res

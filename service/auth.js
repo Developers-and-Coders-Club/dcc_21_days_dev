@@ -1,21 +1,18 @@
 import jwt from "jsonwebtoken";
-const secret = "JanKeBhiKyaHekrLega";
-
+const secret = "JanKeBhiKyaKrLega";
 function setUser(user) {
     return jwt.sign({
         username: user.username,
         email: user.email,
         enrollNo: user.enrollNo,
         role: user.role,
-    }, secret);
+    }, process.env.ACCESS_TOKEN_SECRET || secret);
 }
 
 function getUser(token) {
     if(!token) return null;
     try {
-        const result = jwt.verify(token, secret);
-        console.log(result);
-        return jwt.verify(token, secret);
+        return jwt.verify(token, process.env.ACCESS_TOKEN_SECRET || secret);
     }
     catch(error) {
         return null;

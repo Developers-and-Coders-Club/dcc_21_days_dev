@@ -1,4 +1,5 @@
 import express from "express";
+import dotenv from "dotenv"
 import createTables from "./database/createTable.js";
 import userRouter from "./routes/user.js";
 import submissionRouter from "./routes/submission.js";
@@ -7,6 +8,7 @@ import authMiddleware from "./middlewares/auth.js";
 import utilityRouter from "./routes/utility.js";
 
 const app = express();
+dotenv.config();
 
 // -------Middlewares-------------
 app.use(express.json());
@@ -26,7 +28,6 @@ app.use("/user", userRouter);
 app.use("/submission", authMiddleware.checkForAuthentication, submissionRouter);
 app.use("/leaderboard", leaderboardRouter);
 app.use("/utility", utilityRouter);
-// app.use("/utility", utilRouter);
 
 app.listen(PORT, () => {
   console.log(`Server started at PORT ${PORT}`);
