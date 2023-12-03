@@ -1,5 +1,6 @@
 import jwt from "jsonwebtoken";
 const secret = "JanKeBhiKyaKrLega";
+
 function setUser(user) {
     return jwt.sign({
         username: user.username,
