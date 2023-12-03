@@ -1,10 +1,12 @@
-import express from "express";
-import createTables from "./database/createTable.js";
-import userRouter from "./routes/user.js";
-import submissionRouter from "./routes/submission.js";
-import leaderboardRouter from "./routes/leaderboard.js";
-import authMiddleware from "./middlewares/auth.js";
-import utilityRouter from "./routes/utility.js";
+import express from 'express';
+import createTables from './database/createTable.js';
+import userRouter from './routes/user.js';
+import submissionRouter from './routes/submission.js';
+import leaderboardRouter from './routes/leaderboard.js';
+import authMiddleware from './middlewares/auth.js';
+import utilityRouter from './routes/utility.js';
+import dotenv from 'dotenv';
+dotenv.config();
 
 const app = express();
 
@@ -18,14 +20,14 @@ const PORT = process.env.PORT || 3000;
 createTables();
 
 // -------Routes--------
-app.get("/ping", (_, res) => {
-  res.status(200).json("pong");
+app.get('/ping', (_, res) => {
+  res.status(200).json('pong');
 });
 
-app.use("/user", userRouter);
-app.use("/submission", authMiddleware.checkForAuthentication, submissionRouter);
-app.use("/leaderboard", leaderboardRouter);
-app.use("/utility", utilityRouter);
+app.use('/user', userRouter);
+app.use('/submission', authMiddleware.checkForAuthentication, submissionRouter);
+app.use('/leaderboard', leaderboardRouter);
+app.use('/utility', utilityRouter);
 // app.use("/utility", utilRouter);
 
 app.listen(PORT, () => {

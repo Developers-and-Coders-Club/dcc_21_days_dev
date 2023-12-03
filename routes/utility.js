@@ -1,7 +1,7 @@
-import express from "express";
+import express from 'express';
 const router = express.Router();
-import utility from "../controllers/utility/utility.js";
+import utility from '../controllers/utility/utility.js';
 
-router.get("/date", utility.getDayNumber);
+router.get('/day', utility.getDayNumber);
 
 export default router;
