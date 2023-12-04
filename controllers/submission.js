@@ -51,8 +51,8 @@ async function handleAddSubmission(req, res) {
     if (!dayNo) {
       return res.status(400).json({ msg: "dayNo not specified" });
     }
-    // const curDayNo = getDayNumber();
     const curDayNo = 2;
+    // const curDayNo = getDayNumber();
     const currentDayNo = curDayNo < 0 ? 0 : curDayNo;
     if (currentDayNo - dayNo > 1 || currentDayNo - dayNo < 0) {
       return res
