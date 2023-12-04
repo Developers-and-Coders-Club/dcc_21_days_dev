@@ -4,7 +4,7 @@ function checkForAuthentication(req, res, next) {
   const user = authService.getUser(req.headers.token);
   req.user = null;
   if (!user) {
-    return res.status(401).json({ msg: 'unauthorized login required!' });
+    return res.status(401).json({ msg: 'unauthorized: login required!' });
   }
   req.user = user;
   next();
