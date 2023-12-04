@@ -68,6 +68,16 @@ function createScoreTable() {
   Database.prepare(query).run();
 }
 
+function createTaskTable(domain) {
+  const query = `CREATE TABLE IF NOT EXISTS taskTable${domain}(
+    dayNo INT PRIMARY KEY,
+    title TEXT default "untitled" ,
+    description TEXT default "cooking",
+    solution TEXT default "coming soon"
+  )`;
+  Database.prepare(query).run();
+}
+
 function createTables() {
   createHitmapTable();
   createUserTable();
@@ -75,6 +85,9 @@ function createTables() {
   createProcessedSubmissionTable();
   createAlreadySubmittedTable();
   createScoreTable();
+  createTaskTable('web');
+  createTaskTable('android');
+  createTaskTable('ml');
 }
 
 export default createTables;

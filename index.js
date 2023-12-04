@@ -7,6 +7,7 @@ import submissionRouter from './routes/submission.js';
 import leaderboardRouter from './routes/leaderboard.js';
 import authMiddleware from './middlewares/auth.js';
 import utilityRouter from './routes/utility.js';
+import taskRouter from './routes/task.js';
 
 dotenv.config();
 
@@ -32,7 +33,7 @@ app.use('/user', userRouter);
 app.use('/submission', authMiddleware.checkForAuthentication, submissionRouter);
 app.use('/leaderboard', leaderboardRouter);
 app.use('/utility', utilityRouter);
-// app.use("/utility", utilRouter);
+app.use('/task', taskRouter);
 
 app.listen(PORT, () => {
   console.log(`Server started at PORT ${PORT}`);
