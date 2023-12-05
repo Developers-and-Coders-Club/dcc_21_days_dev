@@ -16,9 +16,9 @@ function createUserTable() {
       fullname TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
       enrollNo TEXT NOT NULL,
-      phoneNumber TEXT NOT NULL
+      phoneNumber TEXT NOT NULL,
       password TEXT NOT NULL,
-      role TEXT DEFAULT "PARTICIPANT",
+      role TEXT DEFAULT "PARTICIPANT"
     )`;
   Database.prepare(query).run();
 }
