@@ -91,7 +91,8 @@ async function handleAddSubmission(req, res) {
       return res.status(200).json({ msg: 'Task already submitted' });
     } else if (isAlreadySubmitted.response === 2) {
       // return res.status(400).json({ msg: isAlreadySubmitted.message });
-      console.log(isAlreadySubmitted.message);
+      if (!(process.env.NODE_ENV == 'production'))
+        console.log(isAlreadySubmitted.message);
       return res
         .status(500)
         .json({ msg: "there is some server error. it's me not you !" });
@@ -118,7 +119,8 @@ async function handleAddSubmission(req, res) {
         submission.dayNo
       );
     } else {
-      console.log('task submitted and updated in taskSubmitted db');
+      if (!(process.env.NODE_ENV == 'production'))
+        console.log('task submitted and updated in taskSubmitted db');
     }
     return res.status(200).json({
       msg: `successfully submitted submissionId:${submission.submissionId}`,
