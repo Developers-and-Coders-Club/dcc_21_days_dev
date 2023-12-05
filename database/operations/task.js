@@ -51,6 +51,12 @@ const setTask = async (domain, dayNo, taskTitle, taskDescription) => {
       console.log('domain,dayNo or task is not valid in setTask');
       return { response: 1 };
     }
+    const searchQuery = `SELECT * FROM taskTable${domain} WHERE dayNo=?`;
+    const fetchResult = await Database.prepare(searchQuery).get(dayNo);
+    if (!fetchResult) {
+      console.log('task is not set');
+      return { response: 2 };
+    }
     const query = `INSERT INTO taskTable${domain} (dayNo,title,description) VALUES (?, ?, ?)`;
     await Database.prepare(query).run(dayNo, taskTitle, taskDescription);
     console.log('task is set');
