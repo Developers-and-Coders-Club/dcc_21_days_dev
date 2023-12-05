@@ -5,7 +5,8 @@ const domains = ['web', 'android', 'ml'];
 const getScoresDomain = async (domain) => {
   try {
     if (!domain || domains.includes(domain) === false) {
-      console.log('domain is not valid');
+      if (!(process.env.NODE_ENV == 'production'))
+        console.log('domain is not valid');
       return [{ username: 'god', score: 123 }]; // hatana hai
     }
     const query = `SELECT username,${domain} FROM scoreTable`;
@@ -26,7 +27,8 @@ const updateScoreUser = async (domain, username, score) => {
       isNaN(score) ||
       !username
     ) {
-      console.log('domain,score or username is not valid in updateScoreUser');
+      if (!(process.env.NODE_ENV == 'production'))
+        console.log('domain,score or username is not valid in updateScoreUser');
       return 0;
     }
     const queryFetch = `SELECT ${domain} FROM scoreTable WHERE username=?`;
@@ -34,11 +36,13 @@ const updateScoreUser = async (domain, username, score) => {
     const queryInsert = `INSERT INTO scoreTable (username,${domain}) VALUES (?, ?)`;
     const fetchResult = await Database.prepare(queryFetch).get(username);
     if (!fetchResult) {
-      console.log('new user is added to scoreTable');
+      if (!(process.env.NODE_ENV == 'production'))
+        console.log('new user is added to scoreTable');
       await Database.prepare(queryInsert).run(username, score);
       return score;
     } else {
-      console.log('user is already in scoreTable and score is updated');
+      if (!(process.env.NODE_ENV == 'production'))
+        console.log('user is already in scoreTable and score is updated');
       const newScore = fetchResult[domain] + score;
       await Database.prepare(queryUpdate).run(newScore, username);
       return newScore;
@@ -52,7 +56,8 @@ const updateScoreUser = async (domain, username, score) => {
 const getScoreUser = async (domain, username) => {
   try {
     if (!domain || domains.includes(domain) === false || username === null) {
-      console.log('domain or username is not valid in getScoreUser');
+      if (!(process.env.NODE_ENV == 'production'))
+        console.log('domain or username is not valid in getScoreUser');
       return 0;
     }
     const queryFetch = `SELECT ${domain} FROM scoreTable WHERE username=?`;
@@ -61,12 +66,14 @@ const getScoreUser = async (domain, username) => {
     if (!fetchResult) {
       const newScore = 0;
       await Database.prepare(queryInsert).run(username, newScore);
-      console.log(
-        'user is not in scoreTable and new user is added with score 0'
-      );
+      if (!(process.env.NODE_ENV == 'production'))
+        console.log(
+          'user is not in scoreTable and new user is added with score 0'
+        );
       return 0;
     } else {
-      console.log('user is in scoreTable and score is fetched');
+      if (!(process.env.NODE_ENV == 'production'))
+        console.log('user is in scoreTable and score is fetched');
       return fetchResult[domain];
     }
   } catch (err) {

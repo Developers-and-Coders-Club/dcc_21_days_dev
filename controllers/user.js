@@ -29,10 +29,10 @@ async function handleUserSignUp(req, res) {
 
   const error = await userManager.addUser(user);
   if (error) return res.status(500).json({ error: error });
-  console.log(user);
+  if (!(process.env.NODE_ENV == 'production')) console.log(user);
   const token = authService.setUser(user);
   return res
-    .status(200)
+    .status(201)
     .json({ msg: `${user.username} added successfully`, token: token });
 }
 

@@ -33,7 +33,7 @@ function getUser(token) {
     return jwt.verify(token, publicKey, { algorithms: ['RS256'] });
   } catch (error) {
     if (error.name === 'TokenExpiredError') {
-      console.log('Token expired');
+      if (!(process.env.NODE_ENV == 'production')) console.log('Token expired');
     }
     return null;
   }
