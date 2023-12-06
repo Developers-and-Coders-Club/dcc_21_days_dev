@@ -7,11 +7,11 @@ async function handleGetTask(req, res) {
     return res.status(500).json({ msg: 'server error' });
   if (result.response === 1)
     return res
-      .status(404)
+      .status(400)
       .json({ msg: 'domain or dayNo is not valid in getTask' });
   if (result.response === 2)
     return res
-      .status(200)
+      .status(404)
       .json({ msg: `task is not yet set for the day ${dayNo}` });
   return res.status(200).send(result.fetchResult);
 }
@@ -23,7 +23,7 @@ async function handleSetTask(req, res) {
     return res.status(500).json({ msg: 'server error' });
   if (result.response === 1)
     return res
-      .status(404)
+      .status(400)
       .json({ msg: 'domain or dayNo is not valid in getTask' });
   if (result.response === 3)
     return res
@@ -64,7 +64,7 @@ function handleGetAllTask(req, res) {
   if (result.response == 0)
     return res.status(500).json({ msg: 'server error' });
   if (result.response === 1)
-    return res.status(404).json({ msg: 'domain is not valid in getAllTask' });
+    return res.status(400).json({ msg: 'domain is not valid in getAllTask' });
   return res.status(200).send(result.fetchResult);
 }
 
