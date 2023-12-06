@@ -31,6 +31,6 @@ async function getDayNumber(req, resp) {
   // return daysDifference + 1; // change required
 }
 
-const utility = { getDayNumber, getLocalTime, calculateDaysDifference };
+const timeUtil = { getDayNumber, getLocalTime, calculateDaysDifference };
 
-export default utility;
+export default timeUtil;
