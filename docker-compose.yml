@@ -2,7 +2,7 @@ version: '3.8'
 
 services:
   nodeapp:
-    build: .
+    image: arnabdaz/dcc_21_days_dev:latest
     ports:
       - '3000:3000'
     environment:
