@@ -1,5 +1,4 @@
 import express from 'express';
-import cors from 'cors';
 import dotenv from 'dotenv';
 import createTables from './database/createTable.js';
 import userRouter from './routes/user.js';
@@ -8,6 +7,7 @@ import leaderboardRouter from './routes/leaderboard.js';
 import authMiddleware from './middlewares/auth.js';
 import utilityRouter from './routes/utility.js';
 import taskRouter from './routes/task.js';
+import cors from './service/cors.js';
 
 dotenv.config();
 
@@ -17,7 +17,7 @@ const app = express();
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 
-app.use(cors());
+app.use(cors);
 
 const PORT = process.env.PORT || 3000;
 

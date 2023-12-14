@@ -11,7 +11,10 @@ dotenv.config();
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 
 const nextcloudUrl = process.env.NEXTCLOUD_URL;
-const nextcloudOptions = JSON.parse(process.env.NEXTCLOUD_OPTIONS);
+const nextcloudOptions = {
+  username: process.env.NEXTCLOUD_USERNAME,
+  password: process.env.NEXTCLOUD_PASSWORD,
+};
 
 // Initialize WebDAV client for Nextcloud
 const webdavClient = createClient(nextcloudUrl, nextcloudOptions);
@@ -34,8 +37,15 @@ function backupDatabase() {
 
   // Copy the database file
   try {
-    fs.copyFileSync(dbPath, backupPath);
-    console.log(`Backup created at ${backupPath}`);
+    if (fs.existsSync(dbPath)) {
+      fs.copyFileSync(dbPath, backupPath);
+      console.log(`Backup created at ${backupPath}`);
+    }
+    // After backup, upload to Nextcloud
+    uploadToNextcloud(
+      dbPath,
+      process.env.NEXTCLOUD_BACKUP_PATH + '/' + process.env.DB_FILENAME
+    );
   } catch (error) {
     console.error('Error creating backup:', error);
   }
@@ -73,7 +83,7 @@ function compressAndUploadBackups() {
         process.env.BACKUP_DIR,
         process.env.BACKUP_ZIP
       ),
-      process.env.NEXTCLOUD_BACKUP_PATH
+      process.env.NEXTCLOUD_BACKUP_FILE_PATH
     );
   });
 }
@@ -89,21 +99,63 @@ function uploadToNextcloud(filePath, remotePath) {
     });
 }
 
+function fetchBackupFromNextcloud() {
+  const remotePath = process.env.NEXTCLOUD_BACKUP_PATH;
+  const projectRootPath = path.join(__dirname, '..');
+  const databaseFilePath = path.join(projectRootPath, process.env.DB_FILENAME);
+
+  webdavClient
+    .getDirectoryContents(remotePath)
+    .then((contents) => {
+      const databaseFile = contents.find(
+        (item) => item.basename === process.env.DB_FILENAME
+      );
+
+      if (databaseFile) {
+        const remoteFileLastModified = new Date(databaseFile.lastmod);
+
+        if (fs.existsSync(databaseFilePath)) {
+          const localFileStats = fs.statSync(databaseFilePath);
+          const localFileLastModified = new Date(localFileStats.mtime);
+
+          if (localFileLastModified < remoteFileLastModified) {
+            downloadDatabase(databaseFilePath, databaseFile);
+          } else {
+            console.log('Local Database is up to date.');
+          }
+        } else {
+          downloadDatabase(databaseFilePath, databaseFile);
+        }
+      } else {
+        console.log('Database not found on Nextcloud.');
+      }
+    })
+    .catch((error) => {
+      console.error('Error fetching from Nextcloud:', error);
+    });
+}
+
+function downloadDatabase(databaseFilePath, databaseFile) {
+  webdavClient
+    .createReadStream(databaseFile.filename)
+    .pipe(fs.createWriteStream(databaseFilePath));
+  console.log('Downloaded Database to project root');
+}
+
 // Schedule the hourly backup
 cron.schedule('0 * * * *', () => {
-  console.log('Running a task every hour');
+  console.log('Running an hourly task for backup');
   backupDatabase();
 });
 
-// Schedule the daily backup upload
+// Schedule the daily backup upload (optional, can remove if not needed)
 cron.schedule('0 0 * * *', () => {
   console.log('Running a daily task for backup upload');
   compressAndUploadBackups();
 });
 
 const backup = {
-  backupDatabase,
-  compressAndUploadBackups,
+  fetchBackupFromNextcloud,
 };
 
 export default backup;

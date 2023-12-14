@@ -53,7 +53,7 @@ async function handleAddSubmission(req, res) {
     }
     const curDayNo = getDayNumber();
     const currentDayNo = curDayNo < 0 ? 0 : curDayNo;
-    if (currentDayNo - dayNo > 1 || currentDayNo - dayNo < 0) {
+    if (currentDayNo - dayNo < 0) {
       return res
         .status(400)
         .json({ msg: 'dayNo is exceeded the allowed window' });

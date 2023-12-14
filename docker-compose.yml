@@ -1,0 +1,32 @@
+version: '3.8'
+
+services:
+  nodeapp:
+    image: arnabdaz/dcc_21_days_dev:latest
+    ports:
+      - '3000:3000'
+    environment:
+      - NODE_ENV=production
+      - PORT=3000
+
+    command: pm2-runtime start npm -- run start
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+
+  uptime-kuma:
+    image: louislam/uptime-kuma
+    ports:
+      - '3002:3001'
+    volumes:
+      - ./logs:/app/data
+
+  # cadvisor:
+  #   image: gcr.io/cadvisor/cadvisor
+  #   volumes:
+  #     - /:/rootfs:ro
+  #     - /var/run:/var/run:rw
+  #     - /sys:/sys:ro
+  #     - /var/lib/docker/:/var/lib/docker:ro
+  #   ports:
+  #     - '8080:8080'

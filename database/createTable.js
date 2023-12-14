@@ -12,13 +12,13 @@ function createHitmapTable() {
 
 function createUserTable() {
   const query = `CREATE TABLE IF NOT EXISTS UserInfo (
-      fullname TEXT NOT NULL,
       username TEXT PRIMARY KEY,
+      fullname TEXT NOT NULL,
       email TEXT UNIQUE NOT NULL,
       enrollNo TEXT NOT NULL,
+      phoneNumber TEXT NOT NULL,
       password TEXT NOT NULL,
-      role TEXT DEFAULT "PARTICIPANT",
-      phoneNumber TEXT NOT NULL
+      role TEXT DEFAULT "PARTICIPANT"
     )`;
   Database.prepare(query).run();
 }
