@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 # Path to the RSA keys
 PRIVATE_KEY_PATH="./service/private_key.pem"

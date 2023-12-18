@@ -1,5 +1,5 @@
 # Use the official Node.js 20 image as a parent image
-FROM node:20
+FROM node:20-alpine3.19
 
 # Set working directory in the container
 WORKDIR /usr/src/app
@@ -11,6 +11,12 @@ COPY package*.json ./
 # Use --production flag to avoid installing devDependencies
 RUN npm install --production
 
+# Install PM2
+RUN npm install pm2 -g
+
+# install openssl
+RUN apk update && apk add --no-cache openssl
+
 # Copy rest of the code
 COPY . .
 
@@ -19,9 +25,6 @@ RUN chmod +x ./generate_rsa_keys.sh
 
 # script to generate RSA keys
 RUN ./generate_rsa_keys.sh
-
-# Install PM2
-RUN npm install pm2 -g
 
 # Expose the port 3000
 EXPOSE 3000
