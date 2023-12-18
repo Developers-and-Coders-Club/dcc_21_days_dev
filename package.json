@@ -4,8 +4,8 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "start": "bash ./generate_rsa_keys.sh && node index.js",
-    "dev": "bash ./generate_rsa_keys.sh && nodemon index.js"
+    "start": "sh ./generate_rsa_keys.sh && node index.js",
+    "dev": "sh ./generate_rsa_keys.sh && nodemon index.js"
   },
   "repository": {
     "type": "git",
