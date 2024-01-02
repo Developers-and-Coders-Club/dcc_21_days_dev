@@ -4,49 +4,14 @@ import heatMapManager from '../database/operations/heatmap.js';
 import taskSubmitted from '../database/operations/taskSubmitted.js';
 import score from '../database/operations/score.js';
 import { v4 as uuidv4 } from 'uuid';
+import getDayNumber from '../utility/time.js';
 
 const domains = ['web', 'android', 'ml'];
 
-// Function to get local time in a specific time zone
-function getLocalTime(timezone) {
-  const options = { timeZone: timezone };
-  const formatter = new Intl.DateTimeFormat('en-US', options);
-  const localTime = new Date(formatter.format(new Date()));
-  return localTime;
-}
 
-// Function to calculate the difference in days between two dates
-function calculateDaysDifference(date1, date2) {
-  const timeDifference = date1.getTime() - date2.getTime();
-  const daysDifference = timeDifference / (1000 * 60 * 60 * 24);
-  return Math.floor(daysDifference);
-}
-
-function getDayNumber() {
-  // Set the target date (5 Nov 2023 12:00 AM in Asia/Kolkata)
-  const targetDate = new Date('2023-12-05T00:00:00Z');
-  targetDate.toLocaleString('en-US', { timeZone: 'Asia/Kolkata' });
-
-  // Get the current local time in Asia/Kolkata
-  const currentTimeInAsiaKolkata = getLocalTime('Asia/Kolkata');
-
-  // Calculate the difference in days
-  const daysDifference = calculateDaysDifference(
-    currentTimeInAsiaKolkata,
-    targetDate
-  );
-
-  return daysDifference + 1; // change required
-}
-
-//TODO: change required before testing deployment 😰 - update: done
 async function handleAddSubmission(req, res) {
   // req - (datatype : TEXT) - username, driveLink, liveLink(optional), domain
   try {
-    // const dayNo = getDayNumber(); //change required before testing
-    // const dayNo = 2; // 👹
-
-    //-----------possible solution days allowed logic---------------
     const dayNo = req.body.dayNo;
     if (!dayNo) {
       return res.status(400).json({ msg: 'dayNo not specified' });
