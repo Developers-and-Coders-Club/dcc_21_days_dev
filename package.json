@@ -19,7 +19,7 @@
   "homepage": "https://github.com/2058govindsingh/dcc_21_days_web#readme",
   "type": "module",
   "dependencies": {
-    "archiver": "^6.0.1",
+    "archiver": "^7.0.0",
     "better-sqlite3": "^9.2.2",
     "cors": "^2.8.5",
     "dotenv": "^16.3.1",
